@@ -19,26 +19,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public SecurityConfiguration(InvoicifyUserDetailsService userDetailsService) {
 		this.userDetailsService = userDetailsService;
 	}
-	
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-			.authorizeRequests()
-				.antMatchers(HttpMethod.GET, "/", "/css/**").permitAll()
-				.antMatchers("/admin/**").hasRole("ADMIN")
-				.anyRequest().authenticated()
-			.and()
-			.formLogin();
+		http.authorizeRequests() //
+				.antMatchers(HttpMethod.GET, "/", "/css/**").permitAll() //
+				.antMatchers("/admin/**").hasRole("ADMIN")//
+				.antMatchers("/invoices/**").hasAnyRole("ACCOUNTANT", "ADMIN")//
+				.antMatchers("/billing-records/**").hasAnyRole("CLERK", "ADMIN")//
+				.anyRequest().authenticated().and().formLogin();
 	}
-	
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Override
 	protected UserDetailsService userDetailsService() {
 		return userDetailsService;
 	}
-	
+
 }
